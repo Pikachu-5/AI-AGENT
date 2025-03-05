@@ -2,51 +2,56 @@
 
 ## 💡 Overview
 
-```
 I Developed an AI agent capable of processing files as input using LangChain. The agent exhibits reasoning capabilities, supports Retrieval-Augmented Generation (RAG), and i implemented function calling for basic arithmetic operations.
-```
+
 
 ## 🧮 Key features
 
-```
+
 Arithmetic Module (`arithmetic.py`)
 
 Handles basic arithmetic operations (addition, subtraction, multiplication, division).
 
+
 File Processor (`file_processor.py`)
 
 Used document loaders (i initially used LlamaIndex, but had issues getting it up and running so later adapted to LangChains DirectoryLoader from the community package) to load text files from the docs folder. It returns a list of document objects that are used for summarization and retrieval.
+
 
 Notes Summary (`notes_summary.py`)
 
 Reads documents from the docs folder.
 Uses regex to extract the target file name from the users input. constructs a prompt and calls the Gemini API(gemini-2.0-flash) to generate a summary of the document.
 
+
 Reasoning Module (`reasoning.py`)
 
 it gives responses using the Gemini API for queries that do not have the required words.
+
 
 Web Search (`web_search.py`)
 
 Implements web search functionality. Based on Dduckduckgo.
 
+
 Retrieval-Augmented Generation (`rag.py`)
 
 Uses LangChain vectorstore and embeddings to index documents for search. This retrieves relevant context from documents to answer user queries more relevantly.
+
 
 Custom Gemini LLM (`gemini_llm.py`)
 
 This is a custom wrapper to integrate Gemini API with LangChains LLM interface. As mentioned before i was having trouble getting Lama-index running on my sytem, but Langchain doesnt support GEmini API. Therefore i had to do alot of research to create this gemini wrapper that works with langchain.
 
+
 Web Interface (`templates/index.html`)
 
 The HTML file combines inline CSS for styling and JavaScript (using React and Babel via CDN) to create animated, full-screen chat interface. Added an upload button where the user can input the text tfile to be summarized it and it automatically does it for them.
 
-```
 
 ## 🔄 Debugging and Development Journey
 
-```python
+```
 - **Initial Setup**  
 
 Started with a cmd chatbot integrating arithmetic operations and basic reasoning. This was relatively easy.
