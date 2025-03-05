@@ -87,6 +87,7 @@ ai-agent/
 ├── web_search.py
 ├── rag.py 
 ├── gemini_llm.py
+├── uploads/
 ├── templates/ 
 │ └── index.html
 ```
