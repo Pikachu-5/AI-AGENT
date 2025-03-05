@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot Interface</title>
+  <style>
+    /* Inline CSS merged here */
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: #222;
+      font-family: Arial, sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .chat-container {
+      width: 90vw;
+      max-width: 800px;
+      height: 70vh;
+      background: #333;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 20px;
+    }
+    #chat-window {
+      border: 1px solid #444;
+      background: #2a2a2a;
+      padding: 15px;
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      border-radius: 5px;
+    }
+    .message {
+      margin-bottom: 12px;
+      opacity: 0;
+      animation: fadeIn 0.5s forwards;
+    }
+    .message.user {
+      color: #00d1b2;
+      text-align: right;
+    }
+    .message.bot {
+      color: #f39c12;
+      text-align: left;
+    }
+    .input-container {
+      display: flex;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      background: #00d1b2;
+      color: #222;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #00b89c;
+    }
+    .upload-container {
+      margin-bottom: 20px;
+    }
+    input[type="file"] {
+      padding: 10px;
+      font-size: 16px;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <!-- React and Babel CDN -->
+  <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  {% raw %}
+  <script type="text/babel">
+    class ChatApp extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { messages: [], input: "" };
+        this.handleSend = this.handleSend.bind(this);
+        this.handleInputChange = this.handleInputChange.bind(this);
+        this.handleFileUpload = this.handleFileUpload.bind(this);
+      }
+      
+      handleInputChange(e) {
+        this.setState({ input: e.target.value });
+      }
+      
+      handleSend() {
+        const { input } = this.state;
+        if (input.trim() === "") return;
+        this.addMessage("user", input);
+        fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: input })
+          })
+            .then(res => {
+              // Check the response content type
+              const contentType = res.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                return res.json();
+              } else {
+                return res.text().then(text => {
+                  throw new Error("Expected JSON but got: " + text);
+                });
+              }
+            })
+            .then(data => {
+              this.addMessage("bot", data.response);
+              this.setState({ input: "" });
+            })
+            .catch(error => {
+              this.addMessage("bot", "Error: " + error);
+            });
+      }
+      
+      handleFileUpload(e) {
+        const fileInput = document.getElementById("file-input");
+        const file = fileInput.files[0];
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+        fetch("/upload", {
+          method: "POST",
+          body: formData
+        })
+          .then(res => res.json())
+          .then(data => {
+            this.addMessage("bot", data.response || data.error);
+          })
+          .catch(error => {
+            this.addMessage("bot", "Error: " + error);
+          });
+      }
+      
+      addMessage(sender, text) {
+        const newMsg = { sender, text };
+        this.setState(prevState => ({
+          messages: [...prevState.messages, newMsg]
+        }));
+      }
+      
+      render() {
+        return (
+          <div style={{width: "100%", height: "100%"}}>
+            <div className="upload-container">
+              <input type="file" id="file-input" />
+              <button onClick={this.handleFileUpload}>Upload File</button>
+            </div>
+            <div className="chat-container">
+              <h2>Chatbot</h2>
+              <div id="chat-window">
+                {this.state.messages.map((msg, idx) => (
+                  <div key={idx} className={`message ${msg.sender}`}>
+                    <strong>{msg.sender === "user" ? "You" : "Bot"}:</strong> {msg.text}
+                  </div>
+                ))}
+              </div>
+              <div className="input-container">
+                <input
+                  type="text"
+                  placeholder="Type a message"
+                  value={this.state.input}
+                  onChange={this.handleInputChange}
+                  onKeyPress={(e) => { if (e.key === "Enter") this.handleSend(); }}
+                />
+                <button onClick={this.handleSend}>Send</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+    }
+    
+    ReactDOM.render(<ChatApp />, document.getElementById("root"));
+  </script>
+  {% endraw %}
+</body>
+</html>
