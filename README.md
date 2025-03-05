@@ -36,7 +36,7 @@ Uses LangChain vectorstore and embeddings to index documents for search. This re
 
 Custom Gemini LLM (`gemini_llm.py`)
 
-This is a custom wrapper to integrate Gemini API with LangChains LLM interface. As mentioned before i was having trouble getting Lama-index running on my sytem, but Langchain doesnt support GEmini API. Therefore i had to do alot of research/use ai(😉) to create this gemini wrapper that works with langchain.
+This is a custom wrapper to integrate Gemini API with LangChains LLM interface. As mentioned before i was having trouble getting Lama-index running on my sytem, but Langchain doesnt support GEmini API. Therefore i had to do alot of research to create this gemini wrapper that works with langchain.
 
 Web Interface (`templates/index.html`)
 
