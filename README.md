@@ -42,8 +42,7 @@ This is a custom wrapper to integrate Gemini API with LangChains LLM interface. 
 
 Web Interface (`templates/index.html`)
 
-The HTML file combines inline CSS for styling and JavaScript (using React and Babel via CDN) to create animated, full-screen chat interface.
-The interface sends user queries to the Flask backend via AJAXand displays responses with fade-in animations.
+The HTML file combines inline CSS for styling and JavaScript (using React and Babel via CDN) to create animated, full-screen chat interface. Added an upload button where the user can input the text tfile to be summarized it and it automatically does it for them.
 
 ```
 
