@@ -1,5 +1,5 @@
 # AI-AGENT
-
+RUN APP2.PY
 ## 💡 Overview
 
 I Developed an AI agent capable of processing files as input using LangChain. The agent exhibits reasoning capabilities, supports Retrieval-Augmented Generation (RAG), and i implemented function calling for basic arithmetic operations.
